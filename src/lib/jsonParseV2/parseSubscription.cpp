@@ -653,9 +653,19 @@ static std::string parseKafkaUrl(ConnectionInfo* ciP, SubscriptionUpdate* subsP,
 
   std::string cleanBrokers;
   std::string protocol;
+  std::string  path;
 
-  if (!parseKafkaBrokerList(urlOpt.value, cleanBrokers, protocol))
+  if (!parseKafkaBrokerList(urlOpt.value, cleanBrokers, protocol, path))
     return badInput(ciP, "invalid kafka /url/");
+
+  if (protocol != "kafka:")
+  {
+    return badInput(ciP, "kafka schema is not used in URL");
+  }
+  if (path != "/")
+  {
+    return badInput(ciP, "path cannot be used in kafka url, use topic instead");
+  }
 
   subsP->notification.kafkaInfo.url = "kafka://" + cleanBrokers;
   return "";

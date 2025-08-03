@@ -566,7 +566,7 @@ static SenderThreadParams* buildSenderParamsCustom
     //
     // Kafka notification => list of brokers validated with parseKafkaBrokerList()
     //
-    if (!parseKafkaBrokerList(url, cleanBrokers, protocol))
+    if (!parseKafkaBrokerList(url, cleanBrokers, protocol, uriPath))
     {
       LM_E(("Runtime Error (not sending notification: malformed Kafka broker "
              "list: '%s')", url.c_str()));
