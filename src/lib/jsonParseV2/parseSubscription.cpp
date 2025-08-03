@@ -651,25 +651,13 @@ static std::string parseKafkaUrl(ConnectionInfo* ciP, SubscriptionUpdate* subsP,
     return badInput(ciP, "forbidden characters in kafka field /url/");
   }
 
-  std::string  host;
-  int          port;
-  std::string  path;
-  std::string  protocol;
-  if (!parseUrl(urlOpt.value, host, port, path, protocol))
-  {
+  std::string cleanBrokers;
+  std::string protocol;
+
+  if (!parseKafkaBrokerList(urlOpt.value, cleanBrokers, protocol))
     return badInput(ciP, "invalid kafka /url/");
-  }
-  if (protocol != "kafka:")
-  {
-    return badInput(ciP, "kafka schema is not used in URL");
-  }
-  if (path != "/")
-  {
-    return badInput(ciP, "path cannot be used in kafka url, use topic instead");
-  }
 
-  subsP->notification.kafkaInfo.url = urlOpt.value;
-
+  subsP->notification.kafkaInfo.url = "kafka://" + cleanBrokers;
   return "";
 }
 

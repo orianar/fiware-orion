@@ -37,6 +37,7 @@
 #include "common/wsStrip.h"
 #include "common/limits.h"
 #include "alarmMgr/alarmMgr.h"
+#include "parse/forbiddenChars.h"
 
 
 
@@ -465,6 +466,65 @@ bool parseUrl(const std::string& url, std::string& host, int& port, std::string&
     return false;
   }
 
+  return true;
+}
+
+
+
+/* ****************************************************************************
+*
+* parseKafkaBrokerList
+*/
+bool parseKafkaBrokerList(const std::string& brokersStr,
+                          std::string&       cleanListOut,
+                          std::string&       protocol)
+{
+  if (brokersStr.empty())
+    return false;
+
+  std::stringstream        ss(brokersStr);
+  std::string              rawBroker;
+  std::vector<std::string> cleaned;
+
+  while (std::getline(ss, rawBroker, ','))
+  {
+    // --- Trim ---------------------------------------------------------
+    rawBroker.erase(0, rawBroker.find_first_not_of(" \t\n\r"));
+    rawBroker.erase(rawBroker.find_last_not_of(" \t\n\r") + 1);
+    if (rawBroker.empty())
+      continue;
+
+    // --- Prefix kafka:// --------------------------------------------
+    std::string broker = (rawBroker.rfind("kafka://", 0) == 0)
+                         ? rawBroker.substr(strlen("kafka://"))
+                         : rawBroker;
+
+    // --- Validations -------------------------------------------------
+    if (forbiddenChars(broker.c_str()))
+      return false;
+
+    std::string host, path, proto;
+    int         port = 0;
+    if (!parseUrl("kafka://" + broker, host, port, path, proto))
+      return false;
+    if (path != "/")
+      return false;
+
+    cleaned.push_back(host + ":" + std::to_string(port));
+  }
+
+  if (cleaned.empty())
+    return false;
+
+  // ---  Rebuild final list -----------------------------------------
+  cleanListOut.clear();
+  for (size_t i = 0; i < cleaned.size(); ++i)
+  {
+    if (i) cleanListOut += ',';
+    cleanListOut += cleaned[i];
+  }
+
+  protocol = "kafka:";    // only supported protocol
   return true;
 }
 

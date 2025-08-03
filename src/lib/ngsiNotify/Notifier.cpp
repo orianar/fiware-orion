@@ -550,11 +550,28 @@ static SenderThreadParams* buildSenderParamsCustom
   std::string  host;
   int          port;
   std::string  uriPath;
+  std::string cleanBrokers;
 
-  if (!parseUrl(url, host, port, uriPath, protocol))
+
+  if (notification.type != ngsiv2::KafkaNotification)
   {
-    LM_E(("Runtime Error (not sending notification: malformed URL: '%s')", url.c_str()));
-    return NULL;
+    if (!parseUrl(url, host, port, uriPath, protocol))
+    {
+      LM_E(("Runtime Error (not sending notification: malformed URL: '%s')", url.c_str()));
+      return NULL;
+    }
+  }
+  else
+  {
+    //
+    // Kafka notification => list of brokers validated with parseKafkaBrokerList()
+    //
+    if (!parseKafkaBrokerList(url, cleanBrokers, protocol))
+    {
+      LM_E(("Runtime Error (not sending notification: malformed Kafka broker "
+             "list: '%s')", url.c_str()));
+      return NULL;
+    }
   }
 
 
@@ -608,6 +625,7 @@ static SenderThreadParams* buildSenderParamsCustom
   paramsP->ip               = host;
   paramsP->port             = port;
   paramsP->protocol         = protocol;
+  paramsP->cluster          = cleanBrokers;
   paramsP->verb             = method;
   paramsP->tenant           = tenant;
   paramsP->maxFailsLimit    = maxFailsLimit;

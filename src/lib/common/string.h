@@ -75,7 +75,16 @@ extern bool parseUrl
   std::string&        protocol
 );
 
-
+/* ****************************************************************************
+*
+* parseKafkaBrokerList -
+*/
+extern bool parseKafkaBrokerList
+(
+  const std::string&  url,
+  std::string&        cleanListOut,
+  std::string&        protocol
+);
 
 /* ****************************************************************************
 *
