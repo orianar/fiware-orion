@@ -125,9 +125,5 @@ INSTALL_DIR=/opt/kafka
 curl -fsSL "https://downloads.apache.org/kafka/${KAFKA_VERSION}/kafka_2.12-${KAFKA_VERSION}.tgz" -o /tmp/kafka.tgz
 mkdir -p "$INSTALL_DIR"
 tar -xzf /tmp/kafka.tgz --strip-components=1 -C "$INSTALL_DIR"
-for f in kafka-topics kafka-console-{producer,consumer}; do
-  ln -sf "$INSTALL_DIR/bin/${f}.sh" "/usr/local/bin/$f"
-done
-
 rm /tmp/kafka.tgz
 echo "Done. Open a new shell and run:  kafka-topics --help"
