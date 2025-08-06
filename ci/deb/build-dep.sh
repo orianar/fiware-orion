@@ -123,10 +123,10 @@ KAFKA_VERSION=3.9.1
 INSTALL_DIR=/opt/kafka
 
 curl -fsSL "https://downloads.apache.org/kafka/${KAFKA_VERSION}/kafka_2.12-${KAFKA_VERSION}.tgz" -o /tmp/kafka.tgz
-sudo mkdir -p "$INSTALL_DIR"
-sudo tar -xzf /tmp/kafka.tgz --strip-components=1 -C "$INSTALL_DIR"
+mkdir -p "$INSTALL_DIR"
+tar -xzf /tmp/kafka.tgz --strip-components=1 -C "$INSTALL_DIR"
 for f in kafka-topics kafka-console-{producer,consumer}; do
-  sudo ln -sf "$INSTALL_DIR/bin/${f}.sh" "/usr/local/bin/$f"
+  ln -sf "$INSTALL_DIR/bin/${f}.sh" "/usr/local/bin/$f"
 done
 
 rm /tmp/kafka.tgz
