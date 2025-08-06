@@ -1181,7 +1181,7 @@ kafkaCreateTopics() {
     for i in {1..10}; do
       exists=$(kafka-topics \
         --list \
-        --bootstrap-server localhost:9092 | grep -w "$topic")
+        --bootstrap-server host.docker.internal:9092 | grep -w "$topic")
 
       if [ -n "$exists" ]; then
         echo "Topic '$topic' created and available."
@@ -1208,7 +1208,7 @@ kafkaDestroyTopics() {
      kafka-topics \
       --delete \
       --topic "$topic" \
-      --bootstrap-server localhost:9092 \
+      --bootstrap-server host.docker.internal:9092 \
       --if-exists
   done
 }
