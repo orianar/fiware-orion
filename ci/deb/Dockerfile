@@ -1,5 +1,7 @@
 FROM debian:12.10-slim
 
+RUN apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -yq openjdk-17-jre-headless
+
 ADD build.sh /opt/bin/
 ADD build-dep.sh /opt/bin/
 ADD makefile /opt/archive/

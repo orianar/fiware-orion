@@ -115,3 +115,19 @@ apt-get -y clean \
 && rm -Rf /opt/libmicrohttpd-1.0.1 \
 && rm -Rf /opt/mosquitto-2.0.20 \
 && rm -Rf /opt/gmock-1.5.0
+
+set -e
+echo "Install kafka"
+
+KAFKA_VERSION=3.9.1
+INSTALL_DIR=/opt/kafka
+
+curl -fsSL "https://downloads.apache.org/kafka/${KAFKA_VERSION}/kafka_2.12-${KAFKA_VERSION}.tgz" -o /tmp/kafka.tgz
+sudo mkdir -p "$INSTALL_DIR"
+sudo tar -xzf /tmp/kafka.tgz --strip-components=1 -C "$INSTALL_DIR"
+for f in kafka-topics kafka-console-{producer,consumer}; do
+  sudo ln -sf "$INSTALL_DIR/bin/${f}.sh" "/usr/local/bin/$f"
+done
+
+rm /tmp/kafka.tgz
+echo "Done. Open a new shell and run:  kafka-topics --help"
