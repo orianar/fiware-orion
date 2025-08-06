@@ -11,5 +11,6 @@ RUN ln -s /opt/bin/build.sh /usr/local/bin/build \
 && /opt/bin/build-dep.sh
 
 WORKDIR /opt/
+ENV PATH="${PATH}:/opt/kafka/bin"
 
 CMD ["/usr/local/bin/build", "-h"]
